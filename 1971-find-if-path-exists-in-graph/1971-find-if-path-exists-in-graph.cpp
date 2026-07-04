@@ -1,8 +1,8 @@
 class Solution {
 public:
-    bool checkPathByBFS(auto graph, int source, int destination, int size) {
+    bool checkPathByBFS(auto& graph, int source, int destination, int size) {
         queue<int>qu;
-        vector<int>visited(size + 1);
+        vector<int>visited(size);
         visited[source] = 1;
         qu.push(source);
         while(!qu.empty()) {
