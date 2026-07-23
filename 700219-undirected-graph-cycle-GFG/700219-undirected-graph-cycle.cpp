@@ -1,14 +1,22 @@
 class Solution {
   public:
-    bool helper(int src, unordered_map<int, vector<int>>&adj, vector<int>&visited, int parentVertex) {
+    bool BFS(int src, unordered_map<int, vector<int>>&graph, vector<int>&visited, vector<int>&parent) {
+        queue<int>qu;
         visited[src] = 1;
-        for(const auto& itr : adj[src]) {
-            if(!visited[itr]) {
-                bool ans = helper(itr, adj, visited, src);
-                if(ans == true) return true;
-            }
-            else if(visited[itr] && itr != parentVertex) {
-                return true;
+        qu.push(src);
+        while(!qu.empty()) {
+            int vertex = qu.front();
+            qu.pop();
+            for(const auto& itr : graph[vertex]) {
+                if(!visited[itr]) {
+                    qu.push(itr);
+                    visited[itr] = 1;
+                    parent[itr] = vertex;
+                }
+                else if(visited[itr] && parent[vertex] != itr) {
+                    return true;
+                }
+                
             }
         }
         return false;
@@ -16,18 +24,20 @@ class Solution {
     
     bool isCycle(int V, vector<vector<int>>& edges) {
         // Code here
-        unordered_map<int, vector<int>>adj;
-        vector<int>visited(V, 0);
-        for(const auto& itr : edges) {
-            int u = itr[0];
-            int v = itr[1];
-            adj[u].push_back(v);
-            adj[v].push_back(u);
+        unordered_map<int, vector<int>>graph;
+        for(int i = 0; i < edges.size(); i++) {
+            int u = edges[i][0];
+            int v = edges[i][1];
+            graph[u].push_back(v);
+            graph[v].push_back(u);
         }
+        vector<int>visited(V, 0);
+        vector<int>parent(V, -1);
+        
         for(int i = 0; i < V; i++) {
             if(!visited[i]) {
-                bool ans = helper(i, adj, visited, -1);
-                if(ans == true) return true;
+                bool check = BFS(i, graph, visited, parent);
+                if(check == true) return true;
             }
         }
         return false;
